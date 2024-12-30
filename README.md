@@ -1,6 +1,21 @@
-# [Application name] 
+# Usage Vacuum 
 
-Provide a description of application
+Usage Vacuum takes a Python script built to demo some functionality with print output, converts it to markdown.
+The markdown contains the demo code interspersed with print output.
+
+This works well with my process:
+* As I develop functionality, I write tests, but I also write a demo usage script.
+* The demo usage script looks like a walk through of what my new code does.
+* So converting it into interesting markdown makes sense to me.
+
+Essentially: input is a demo python script for functionality
+output is markdown showing how the code produces output, created from the code itself.
+
+Saves time if you are producing walkthrough markdown and have a script.
+
+Another benefit is that you can test your demo usage script, then convert it to markdown when it works.
+This prevents beautiful markdown with scripting in it which does not work or does not produce the advertised output.
+
 
 ## Future plans
 
