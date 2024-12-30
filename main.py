@@ -1,6 +1,5 @@
 import pdb
 import sys
-import markdown as md
 sys.path.insert(1, '/Users/epohl/projects/setsy/src/')
 sys.path.insert(1, '/Users/epohl/projects/setsy/')
 
