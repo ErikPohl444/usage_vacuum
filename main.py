@@ -4,7 +4,7 @@ sys.path.insert(1, '/Users/epohl/projects/setsy/src/')
 sys.path.insert(1, '/Users/epohl/projects/setsy/')
 
 
-def process_code(c, x, md):
+def process_code(c, x):
     with open("output.md", "wt") as md_file_handle:
         code_lines = c.split("\n")
         output_now = False
@@ -29,8 +29,8 @@ def process_code(c, x, md):
                         for output_code_line in output_code:
                             md_file_handle.write(output_code_line+"\n")
                         md_file_handle.write('```\n')
-                        md_file_handle.write(line.replace("(Pdb) ","").rstrip("\n")+"\n")
-                        output_code =[]
+                        md_file_handle.write(line.replace("(Pdb) ", "").rstrip("\n")+"\n")
+                        output_code = []
             if len(output_code) > 0:
                 md_file_handle.write("'''\\")
                 for output_code_line in output_code:
@@ -38,9 +38,6 @@ def process_code(c, x, md):
                 md_file_handle.write("'''\\")
 
 
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # get code
     with open("c:\\users\\epohl\\projects\\setsy\\src\\demo_usage.py", 'r') as f:
@@ -67,5 +64,4 @@ if __name__ == '__main__':
     fin.close()
 
     # process the output file to pretty it up
-    process_code(code, "output.txt", "output.md")
-
+    process_code(code, "output.txt")
