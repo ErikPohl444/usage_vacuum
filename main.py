@@ -3,12 +3,21 @@ import sys
 sys.path.insert(1, '/Users/epohl/projects/setsy/src/')
 sys.path.insert(1, '/Users/epohl/projects/setsy/')
 
+def remove_logging(line):
+    # key assumptions are not safe here
+    line = line.replace('logger.info("', "")
+    line = line.rstrip(" ")
+    if line[-2:] == '")':
+        line = line[:-2]
+    return line
 
 def process_code(c, x):
     with open("output.md", "wt") as md_file_handle:
         code_lines = c.split("\n")
         output_now = False
         output_code = []
+        in_note = False
+        note_line_no =0
         with open(x, "rt") as output_file_handle:
             for line in output_file_handle:
                 if "<string>" in line and "<module>" in line:
@@ -16,16 +25,41 @@ def process_code(c, x):
                                line.index("<string>")+8+1:
                                line.index("<module>")-1
                                ]
+
                     code_line = code_lines[int(line_num)-1].rstrip("\n")
-                    if output_now:
+                    if code_line.lstrip().startswith("logger.info"):
+                        if output_now and len(output_code) > 0:
+                            md_file_handle.write('\n```python\n')
+                            for output_code_line in output_code:
+                                md_file_handle.write(output_code_line + "\n")
+                            md_file_handle.write('```\n')
+                            output_code = []
+                        if not in_note:
+                            in_note = True
+                            md_file_handle.write("> [!NOTE]\n")
+                            note_line_no = 1
+                        else:
+                            note_line_no += 1
+                        if note_line_no == 1:
+                            prefix = "> "
+                        else:
+                            prefix = ""
+                        md_file_handle.write(prefix + remove_logging(code_line)+'</br>')
+                    elif output_now:
+                        in_note = False
                         output_code.append(code_line)
-                    if "__main__" in code_line:
+                    elif "__main__" in code_line:
                         output_now = True
+                        in_note = False
                 else:
                     if "Return" in line:
                         output_now = False
+                        in_note = False
                     if output_now:
-                        md_file_handle.write('```\n')
+                        if in_note:
+                            md_file_handle.write("\n")
+                            in_note = False
+                        md_file_handle.write('\n```python\n')
                         for output_code_line in output_code:
                             md_file_handle.write(output_code_line+"\n")
                         md_file_handle.write('```\n')
