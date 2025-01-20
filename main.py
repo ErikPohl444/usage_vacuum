@@ -2,6 +2,7 @@ import logging
 import os.path
 import pdb
 import sys
+import argparse
 sys.path.insert(1, '/Users/epohl/projects/dynamic_assignment/src/')
 sys.path.insert(1, '/Users/epohl/projects/dynamic_assignment/')
 
@@ -77,18 +78,23 @@ def process_code(c, x, fname):
 
 if __name__ == '__main__':
     logging.info("in main")
-    root = 'dynamic_assignment'
-    source_path = r"C:\Users\epohl\projects\dynamic_assignment\src\demo_write_configs.py"
+    parser = argparse.ArgumentParser(description="Transform a demo usage script into markdown")
+    parser.add_argument("filename", help="Path of the demo usage file")
+    parser.add_argument("applicationname", help="Application name which is being demoed")
+    args = parser.parse_args()
+    root = args.applicationname
+    source_path = args.filename
     fpath_list = source_path.split('\\')
     fpath = '.'.join(fpath_list[fpath_list.index(root):])
-    print("hello", fpath)
     # get code
     with open(source_path, 'r') as f:
         code = '\n'.join([line.rstrip("\n") for line in f])
-    print("hello", code)
     # create stdin for code lines number of ns for pdb to iterate and direct stdin to that file
     with open("test.txt", "wt") as test_file_handle:
-        for x in range(code.count("\n")):
+        # 100 was added here because i encountered a loop which made the program run longer than the line length
+        # why 100
+        # why not run until pdb is over?
+        for x in range(code.count("\n")*100):
             test_file_handle.write("n\n")
     fin = open("test.txt", "rt")
     sys.stdin = fin
