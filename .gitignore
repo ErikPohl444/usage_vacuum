@@ -1,3 +1,7 @@
 .idea/
 output.txt
 output.md
+__pycache__/
+README.md.resource
+configs.py
+test.txt

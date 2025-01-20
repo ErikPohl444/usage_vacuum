@@ -1,7 +1,9 @@
+import logging
+import os.path
 import pdb
 import sys
-sys.path.insert(1, '/Users/epohl/projects/setsy/src/')
-sys.path.insert(1, '/Users/epohl/projects/setsy/')
+sys.path.insert(1, '/Users/epohl/projects/dynamic_assignment/src/')
+sys.path.insert(1, '/Users/epohl/projects/dynamic_assignment/')
 
 def remove_logging(line):
     # key assumptions are not safe here
@@ -11,7 +13,7 @@ def remove_logging(line):
         line = line[:-2]
     return line
 
-def process_code(c, x):
+def process_code(c, x, fname):
     with open("output.md", "wt") as md_file_handle:
         code_lines = c.split("\n")
         output_now = False
@@ -19,6 +21,7 @@ def process_code(c, x):
         in_note = False
         note_line_no =0
         with open(x, "rt") as output_file_handle:
+            md_file_handle.write(f"# Usage Walkthrough Markdown created by usage-vacuum from {fname}\n\n")
             for line in output_file_handle:
                 if "<string>" in line and "<module>" in line:
                     line_num = line[
@@ -73,10 +76,16 @@ def process_code(c, x):
 
 
 if __name__ == '__main__':
+    logging.info("in main")
+    root = 'dynamic_assignment'
+    source_path = r"C:\Users\epohl\projects\dynamic_assignment\src\demo_write_configs.py"
+    fpath_list = source_path.split('\\')
+    fpath = '.'.join(fpath_list[fpath_list.index(root):])
+    print("hello", fpath)
     # get code
-    with open("c:\\users\\epohl\\projects\\setsy\\src\\demo_usage.py", 'r') as f:
+    with open(source_path, 'r') as f:
         code = '\n'.join([line.rstrip("\n") for line in f])
-
+    print("hello", code)
     # create stdin for code lines number of ns for pdb to iterate and direct stdin to that file
     with open("test.txt", "wt") as test_file_handle:
         for x in range(code.count("\n")):
@@ -98,4 +107,4 @@ if __name__ == '__main__':
     fin.close()
 
     # process the output file to pretty it up
-    process_code(code, "output.txt")
+    process_code(code, "output.txt", fpath)
