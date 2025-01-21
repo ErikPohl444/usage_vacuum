@@ -83,6 +83,13 @@ def convert_transcript_to_markdown(
                 markdown_file_handle.write("'''\\")
 
 
+def get_dot_notation(demo_usage_file_path, application_name):
+    demo_usage_file_path_list = demo_usage_file_path.split('\\')
+    return '.'.join(
+        demo_usage_file_path_list[demo_usage_file_path_list.index(application_name):]
+    )
+
+
 if __name__ == '__main__':
     logging.info("in main")
 
@@ -107,8 +114,7 @@ if __name__ == '__main__':
     # define core variables based on args
     application_name = args.applicationname
     demo_usage_file_path = args.demo_usage_file_path
-    demo_usage_file_path_list = demo_usage_file_path.split('\\')
-    demo_usage_path_from_application_dot_notation = '.'.join(demo_usage_file_path_list[demo_usage_file_path_list.index(application_name):])
+    demo_usage_path_from_application_dot_notation = get_dot_notation(demo_usage_file_path, application_name)
     markdown_output_file = args.markdown_file_path
 
     # create number of debug line iterations file name
