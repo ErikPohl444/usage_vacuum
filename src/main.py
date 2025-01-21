@@ -114,7 +114,7 @@ if __name__ == '__main__':
     # define core variables based on args
     application_name = args.applicationname
     demo_usage_file_path = args.demo_usage_file_path
-    demo_usage_path_from_application_dot_notation = get_dot_notation(demo_usage_file_path, application_name)
+    application_path_dot_notation = get_dot_notation(demo_usage_file_path, application_name)
     markdown_output_file = args.markdown_file_path
 
     # create number of debug line iterations file name
@@ -152,6 +152,6 @@ if __name__ == '__main__':
     convert_transcript_to_markdown(
         demo_walkthrough_code_lines,
         demo_transcript_file_name,
-        demo_usage_path_from_application_dot_notation,
+        application_path_dot_notation,
         markdown_output_file
     )
