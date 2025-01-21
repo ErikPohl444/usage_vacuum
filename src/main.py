@@ -91,8 +91,8 @@ if __name__ == '__main__':
         description="Transform a demo usage script into markdown"
     )
     parser.add_argument(
-        "filename",
-        help="Path of the demo usage file"
+        "demo_usage_file_path",
+        help="Path of the demo usage file and its path"
     )
     parser.add_argument(
         "applicationname",
@@ -106,9 +106,9 @@ if __name__ == '__main__':
 
     # define core variables based on args
     application_name = args.applicationname
-    source_path = args.filename
-    fpath_list = source_path.split('\\')
-    fpath = '.'.join(fpath_list[fpath_list.index(application_name):])
+    demo_usage_file_path = args.demo_usage_file_path
+    demo_usage_file_path_list = demo_usage_file_path.split('\\')
+    demo_usage_path_from_application_dot_notation = '.'.join(demo_usage_file_path_list[demo_usage_file_path_list.index(application_name):])
     markdown_output_file = args.markdown_file_path
 
     # create number of debug line iterations file name
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     demo_transcript_file_name = "./tmp/output.txt"
 
     # get code
-    with open(source_path, 'r') as f:
+    with open(demo_usage_file_path, 'r') as f:
         demo_walkthrough_code_lines = '\n'.join(
             [line.rstrip("\n") for line in f]
         )
@@ -126,28 +126,26 @@ if __name__ == '__main__':
         # 100 was added here because I encountered a loop which made the program run longer than the line length
         # why 100
         # why not run until pdb is over?
-        for debug_iterations in range(demo_walkthrough_code_lines.count("\n") * 100):
-            test_file_handle.write("n\n")
-    demo_line_iterations_file_handle = open(debug_line_iterations_file_name, "rt")
-    sys.stdin = demo_line_iterations_file_handle
+        test_file_handle.write("n\n"*demo_walkthrough_code_lines.count("\n") * 100)
 
-    # direct stdout to a file
-    demo_transcript_file_handle = open(demo_transcript_file_name, "wt")
-    remember_stdout = sys.stdout
-    sys.stdout = demo_transcript_file_handle
+    with open(debug_line_iterations_file_name, "rt") as demo_line_iterations_file_handle:
+        sys.stdin = demo_line_iterations_file_handle
 
-    # run pdb, capturing stdout for pdb using stdin
-    pdb.run(demo_walkthrough_code_lines)
+        # direct stdout to a file
+        with open(demo_transcript_file_name, "wt") as demo_transcript_file_handle:
+            remember_stdout = sys.stdout
+            sys.stdout = demo_transcript_file_handle
 
-    # redirect stdout back to true stdout
-    sys.stdout = remember_stdout
-    demo_transcript_file_handle.close()
-    demo_line_iterations_file_handle.close()
+            # run pdb, capturing stdout for pdb using stdin
+            pdb.run(demo_walkthrough_code_lines)
+
+            # redirect stdout back to true stdout
+            sys.stdout = remember_stdout
 
     # process the output file to pretty it up
     convert_transcript_to_markdown(
         demo_walkthrough_code_lines,
         demo_transcript_file_name,
-        fpath,
+        demo_usage_path_from_application_dot_notation,
         markdown_output_file
     )
