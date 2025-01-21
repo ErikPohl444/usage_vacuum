@@ -1,28 +1,35 @@
 import logging
-import os.path
 import pdb
 import sys
 import argparse
 sys.path.insert(1, '/Users/epohl/projects/dynamic_assignment/src/')
 sys.path.insert(1, '/Users/epohl/projects/dynamic_assignment/')
 
+
 def remove_logging(line):
     # key assumptions are not safe here
-    line = line.replace('logger.info("', "")
-    line = line.rstrip(" ")
+    line = line.replace('logger.info("', "").rstrip(" ")
     if line[-2:] == '")':
         line = line[:-2]
     return line
 
-def process_code(c, x, fname):
-    with open("output.md", "wt") as md_file_handle:
-        code_lines = c.split("\n")
+
+def process_code(
+        code_text,
+        demo_usage_walkthrough_file_name,
+        source_module_name,
+        markdown_output_file_name
+):
+    with open(markdown_output_file_name, "wt") as md_file_handle:
+        code_lines = code_text.split("\n")
         output_now = False
         output_code = []
         in_note = False
-        note_line_no =0
-        with open(x, "rt") as output_file_handle:
-            md_file_handle.write(f"# Usage Walkthrough Markdown created by usage-vacuum from {fname}\n\n")
+        note_line_no = 0
+        with open(demo_usage_walkthrough_file_name, "rt") as output_file_handle:
+            md_file_handle.write(
+                f"# Usage Walkthrough Markdown created by usage-vacuum from {source_module_name}\n\n"
+            )
             for line in output_file_handle:
                 if "<string>" in line and "<module>" in line:
                     line_num = line[
@@ -78,29 +85,42 @@ def process_code(c, x, fname):
 
 if __name__ == '__main__':
     logging.info("in main")
-    parser = argparse.ArgumentParser(description="Transform a demo usage script into markdown")
-    parser.add_argument("filename", help="Path of the demo usage file")
-    parser.add_argument("applicationname", help="Application name which is being demoed")
+    parser = argparse.ArgumentParser(
+        description="Transform a demo usage script into markdown"
+    )
+    parser.add_argument(
+        "filename",
+        help="Path of the demo usage file"
+    )
+    parser.add_argument(
+        "applicationname",
+        help="Application name which is being demoed"
+    )
+    parser.add_argument(
+        "markdown_file_path",
+        help="Markdown file name and path"
+    )
     args = parser.parse_args()
     root = args.applicationname
     source_path = args.filename
     fpath_list = source_path.split('\\')
     fpath = '.'.join(fpath_list[fpath_list.index(root):])
+    markdown_output_file = args.markdown_file_path
     # get code
     with open(source_path, 'r') as f:
         code = '\n'.join([line.rstrip("\n") for line in f])
     # create stdin for code lines number of ns for pdb to iterate and direct stdin to that file
-    with open("test.txt", "wt") as test_file_handle:
-        # 100 was added here because i encountered a loop which made the program run longer than the line length
+    with open("./tmp/test.txt", "wt") as test_file_handle:
+        # 100 was added here because I encountered a loop which made the program run longer than the line length
         # why 100
         # why not run until pdb is over?
         for x in range(code.count("\n")*100):
             test_file_handle.write("n\n")
-    fin = open("test.txt", "rt")
+    fin = open("./tmp/test.txt", "rt")
     sys.stdin = fin
 
     # direct stdout to a file
-    fout = open("output.txt", "wt")
+    fout = open("./tmp/output.txt", "wt")
     save_out = sys.stdout
     sys.stdout = fout
 
@@ -113,4 +133,9 @@ if __name__ == '__main__':
     fin.close()
 
     # process the output file to pretty it up
-    process_code(code, "output.txt", fpath)
+    process_code(
+        code,
+        "../output.txt",
+        fpath,
+        markdown_output_file
+    )
