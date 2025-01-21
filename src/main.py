@@ -6,12 +6,12 @@ sys.path.insert(1, '/Users/epohl/projects/dynamic_assignment/src/')
 sys.path.insert(1, '/Users/epohl/projects/dynamic_assignment/')
 
 
-def remove_logging(line):
+def remove_logging(logging_line):
     # key assumptions are not safe here
-    line = line.replace('logger.info("', "").rstrip(" ")
-    if line[-2:] == '")':
-        line = line[:-2]
-    return line
+    logging_line = logging_line.replace('logger.info("', "").rstrip(" ")
+    if logging_line[-2:] == '")':
+        logging_line = logging_line[:-2]
+    return logging_line
 
 
 def convert_transcript_to_markdown(
