@@ -42,38 +42,48 @@ def convert_transcript_lines_to_markdown(
         source_module_name,
         markdown_output_file_name
 ):
+    # initialize processing variables
+    output_now = False
+    output_code_buffer = []
+    within_logging_block = False
+    logging_block_line_count = 0
+
     with open(markdown_output_file_name, "wt") as markdown_file_handle:
-        output_now = False
-        output_code_buffer = []
-        within_logging_block = False
-        logging_block_line_count = 0
         with open(demo_usage_transcript_file_name, "rt") as transcript_file_handle:
             markdown_file_handle.write(
                 f"# Usage Walkthrough Markdown created by usage-vacuum from {source_module_name}\n\n"
             )
             for transcript_line in transcript_file_handle:
+                # can i get a line number from the transcript?
                 if line_num := is_code_line(transcript_line):
+                    # get code line from source code file
                     code_line = demo_code_lines[int(line_num)-1].rstrip("\n")
+
+                    # is it a logging line?
                     if code_line.lstrip().startswith("logger.info"):
+                        # flush code buffer to output
                         if output_now and len(output_code_buffer) > 0:
                             output_code_buffer = flush_output_buffer(markdown_file_handle, output_code_buffer)
+                        prefix = ""
+                        # determine correct prefix
                         if not within_logging_block:
                             within_logging_block = True
                             markdown_file_handle.write("> [!NOTE]\n")
                             logging_block_line_count = 1
-                        else:
-                            logging_block_line_count += 1
-                        if logging_block_line_count == 1:
                             prefix = "> "
                         else:
-                            prefix = ""
+                            logging_block_line_count += 1
+                        # write logging code line to markdown
                         markdown_file_handle.write(prefix + remove_logging_text(code_line) + '</br>')
+                    # if not logging, append code to code buffer
                     elif output_now:
                         within_logging_block = False
                         output_code_buffer.append(code_line)
+                    # if no code to output and not a logging line, check to see if we have hit code start
                     elif "__main__" in code_line:
                         output_now = True
                         within_logging_block = False
+                # if I can't get a line number, is this a special return case?
                 else:
                     if "Return" in transcript_line:
                         output_now = False
@@ -84,6 +94,8 @@ def convert_transcript_lines_to_markdown(
                             within_logging_block = False
                         output_code_buffer = flush_output_buffer(markdown_file_handle, output_code_buffer)
                         markdown_file_handle.write(transcript_line.replace("(Pdb) ", "").rstrip("\n")+"\n")
+
+            # is there code which is in the buffer which hasn't been flushed to output?
             if len(output_code_buffer) > 0:
                 flush_output_buffer(markdown_file_handle, output_code_buffer)
 
