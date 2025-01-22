@@ -22,6 +22,16 @@ def flush_output_buffer(file_handle, output_buffer):
     return []
 
 
+def is_code_line(line):
+    if "<string>" in line and "<module>" in line:
+        return line[
+               line.index("<string>")+8+1:
+               line.index("<module>")-1
+               ]
+    else:
+        return None
+
+
 def convert_transcript_to_markdown(
         demo_usage_code_text,
         demo_usage_transcript_file_name,
@@ -39,11 +49,7 @@ def convert_transcript_to_markdown(
                 f"# Usage Walkthrough Markdown created by usage-vacuum from {source_module_name}\n\n"
             )
             for transcript_line in transcript_file_handle:
-                if "<string>" in transcript_line and "<module>" in transcript_line:
-                    line_num = transcript_line[
-                               transcript_line.index("<string>")+8+1:
-                               transcript_line.index("<module>")-1
-                               ]
+                if line_num := is_code_line(transcript_line):
                     code_line = demo_code_lines[int(line_num)-1].rstrip("\n")
                     if code_line.lstrip().startswith("logger.info"):
                         if output_now and len(output_code_buffer) > 0:
