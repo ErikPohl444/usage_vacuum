@@ -164,6 +164,7 @@ if __name__ == '__main__':
             logging.disable(logging.NOTSET)
 
             # redirect stdout back to true stdout
+            logger.info("restoring stdout")
             sys.stdout = remember_stdout
 
     # process the output file to pretty it up
