@@ -8,7 +8,7 @@ sys.path.insert(1, '/Users/epohl/projects/dynamic_assignment/src/')
 sys.path.insert(1, '/Users/epohl/projects/dynamic_assignment/')
 
 
-def remove_logging(logging_line):
+def remove_logging_text(logging_line):
     # key assumptions are not safe here
     logging_line = logging_line.replace('logger.info("', "").rstrip(" ")
     if logging_line.endswith('")'):
@@ -67,7 +67,7 @@ def convert_transcript_lines_to_markdown(
                             prefix = "> "
                         else:
                             prefix = ""
-                        markdown_file_handle.write(prefix + remove_logging(code_line)+'</br>')
+                        markdown_file_handle.write(prefix + remove_logging_text(code_line) + '</br>')
                     elif output_now:
                         within_logging_block = False
                         output_code_buffer.append(code_line)
