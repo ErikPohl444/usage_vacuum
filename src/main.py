@@ -32,13 +32,12 @@ def is_code_line(line):
         return None
 
 
-def convert_transcript_to_markdown(
-        demo_usage_code_text,
+def convert_transcript_lines_to_markdown(
+        demo_code_lines,
         demo_usage_transcript_file_name,
         source_module_name,
         markdown_output_file_name
 ):
-    demo_code_lines = demo_usage_code_text.split("\n")
     with open(markdown_output_file_name, "wt") as markdown_file_handle:
         output_now = False
         output_code_buffer = []
@@ -150,8 +149,8 @@ if __name__ == '__main__':
             sys.stdout = remember_stdout
 
     # process the output file to pretty it up
-    convert_transcript_to_markdown(
-        demo_walkthrough_code,
+    convert_transcript_lines_to_markdown(
+        demo_walkthrough_code.split("\n"),
         demo_transcript_file_name,
         application_path_dot_notation,
         markdown_output_file
