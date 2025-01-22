@@ -14,73 +14,69 @@ def remove_logging(logging_line):
     return logging_line
 
 
+def flush_output_buffer(file_handle, output_buffer):
+    file_handle.write('\n```python\n')
+    for output_code_line in output_buffer:
+        file_handle.write(output_code_line + "\n")
+    file_handle.write('```\n')
+    return []
+
+
 def convert_transcript_to_markdown(
         demo_usage_code_text,
-        demo_usage_walkthrough_file_name,
+        demo_usage_transcript_file_name,
         source_module_name,
         markdown_output_file_name
 ):
+    demo_code_lines = demo_usage_code_text.split("\n")
     with open(markdown_output_file_name, "wt") as markdown_file_handle:
-        code_lines = demo_usage_code_text.split("\n")
         output_now = False
-        output_code = []
-        in_note = False
-        note_line_no = 0
-        with open(demo_usage_walkthrough_file_name, "rt") as output_file_handle:
+        output_code_buffer = []
+        within_logging_block = False
+        logging_block_line_count = 0
+        with open(demo_usage_transcript_file_name, "rt") as transcript_file_handle:
             markdown_file_handle.write(
                 f"# Usage Walkthrough Markdown created by usage-vacuum from {source_module_name}\n\n"
             )
-            for line in output_file_handle:
-                if "<string>" in line and "<module>" in line:
-                    line_num = line[
-                               line.index("<string>")+8+1:
-                               line.index("<module>")-1
+            for transcript_line in transcript_file_handle:
+                if "<string>" in transcript_line and "<module>" in transcript_line:
+                    line_num = transcript_line[
+                               transcript_line.index("<string>")+8+1:
+                               transcript_line.index("<module>")-1
                                ]
-
-                    code_line = code_lines[int(line_num)-1].rstrip("\n")
+                    code_line = demo_code_lines[int(line_num)-1].rstrip("\n")
                     if code_line.lstrip().startswith("logger.info"):
-                        if output_now and len(output_code) > 0:
-                            markdown_file_handle.write('\n```python\n')
-                            for output_code_line in output_code:
-                                markdown_file_handle.write(output_code_line + "\n")
-                            markdown_file_handle.write('```\n')
-                            output_code = []
-                        if not in_note:
-                            in_note = True
+                        if output_now and len(output_code_buffer) > 0:
+                            output_code_buffer = flush_output_buffer(markdown_file_handle, output_code_buffer)
+                        if not within_logging_block:
+                            within_logging_block = True
                             markdown_file_handle.write("> [!NOTE]\n")
-                            note_line_no = 1
+                            logging_block_line_count = 1
                         else:
-                            note_line_no += 1
-                        if note_line_no == 1:
+                            logging_block_line_count += 1
+                        if logging_block_line_count == 1:
                             prefix = "> "
                         else:
                             prefix = ""
                         markdown_file_handle.write(prefix + remove_logging(code_line)+'</br>')
                     elif output_now:
-                        in_note = False
-                        output_code.append(code_line)
+                        within_logging_block = False
+                        output_code_buffer.append(code_line)
                     elif "__main__" in code_line:
                         output_now = True
-                        in_note = False
+                        within_logging_block = False
                 else:
-                    if "Return" in line:
+                    if "Return" in transcript_line:
                         output_now = False
-                        in_note = False
+                        within_logging_block = False
                     if output_now:
-                        if in_note:
+                        if within_logging_block:
                             markdown_file_handle.write("\n")
-                            in_note = False
-                        markdown_file_handle.write('\n```python\n')
-                        for output_code_line in output_code:
-                            markdown_file_handle.write(output_code_line+"\n")
-                        markdown_file_handle.write('```\n')
-                        markdown_file_handle.write(line.replace("(Pdb) ", "").rstrip("\n")+"\n")
-                        output_code = []
-            if len(output_code) > 0:
-                markdown_file_handle.write("'''\\")
-                for output_code_line in output_code:
-                    markdown_file_handle.write(output_code_line+"\\")
-                markdown_file_handle.write("'''\\")
+                            within_logging_block = False
+                        output_code_buffer = flush_output_buffer(markdown_file_handle, output_code_buffer)
+                        markdown_file_handle.write(transcript_line.replace("(Pdb) ", "").rstrip("\n")+"\n")
+            if len(output_code_buffer) > 0:
+                flush_output_buffer(markdown_file_handle, output_code_buffer)
 
 
 def get_dot_notation(demo_usage_file_path, application_name):
@@ -123,7 +119,7 @@ if __name__ == '__main__':
 
     # get code
     with open(demo_usage_file_path, 'r') as f:
-        demo_walkthrough_code_lines = '\n'.join(
+        demo_walkthrough_code = '\n'.join(
             [line.rstrip("\n") for line in f]
         )
 
@@ -132,7 +128,7 @@ if __name__ == '__main__':
         # 100 was added here because I encountered a loop which made the program run longer than the line length
         # why 100
         # why not run until pdb is over?
-        test_file_handle.write("n\n"*demo_walkthrough_code_lines.count("\n") * 100)
+        test_file_handle.write("n\n" * demo_walkthrough_code.count("\n") * 100)
 
     with open(debug_line_iterations_file_name, "rt") as demo_line_iterations_file_handle:
         sys.stdin = demo_line_iterations_file_handle
@@ -143,14 +139,14 @@ if __name__ == '__main__':
             sys.stdout = demo_transcript_file_handle
 
             # run pdb, capturing stdout for pdb using stdin
-            pdb.run(demo_walkthrough_code_lines)
+            pdb.run(demo_walkthrough_code)
 
             # redirect stdout back to true stdout
             sys.stdout = remember_stdout
 
     # process the output file to pretty it up
     convert_transcript_to_markdown(
-        demo_walkthrough_code_lines,
+        demo_walkthrough_code,
         demo_transcript_file_name,
         application_path_dot_notation,
         markdown_output_file
