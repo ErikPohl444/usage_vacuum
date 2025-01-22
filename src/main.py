@@ -2,6 +2,8 @@ from setup_logging import logger
 import pdb
 import sys
 import argparse
+import logging
+
 sys.path.insert(1, '/Users/epohl/projects/dynamic_assignment/src/')
 sys.path.insert(1, '/Users/epohl/projects/dynamic_assignment/')
 
@@ -9,7 +11,7 @@ sys.path.insert(1, '/Users/epohl/projects/dynamic_assignment/')
 def remove_logging(logging_line):
     # key assumptions are not safe here
     logging_line = logging_line.replace('logger.info("', "").rstrip(" ")
-    if logging_line[-2:] == '")':
+    if logging_line.endswith('")'):
         logging_line = logging_line[:-2]
     return logging_line
 
@@ -108,7 +110,7 @@ def log_core_vars(core_vars):
 
 
 if __name__ == '__main__':
-    logger.info("in main")
+    logger.info("in usage vacuum")
 
     # get args for CLI usage
     logger.info("setting up CLI arguments")
@@ -157,7 +159,6 @@ if __name__ == '__main__':
 
             # run pdb, capturing stdout for pdb using stdin
             logger.info("iterating through the demo walkthrough python and making a transcript")
-            import logging
             logging.disable(logging.INFO)
             pdb.run(demo_walkthrough_code)
             logging.disable(logging.NOTSET)
