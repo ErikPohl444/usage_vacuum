@@ -43,7 +43,7 @@ def convert_transcript_lines_to_markdown(
         markdown_output_file_name
 ):
     # initialize processing variables
-    output_now = False
+    collecting_buffer_code = False
     output_code_buffer = []
     within_logging_block = False
     logging_block_line_count = 0
@@ -62,33 +62,33 @@ def convert_transcript_lines_to_markdown(
                     # is it a logging line?
                     if code_line.lstrip().startswith("logger.info"):
                         # flush code buffer to output
-                        if output_now and len(output_code_buffer) > 0:
+                        if collecting_buffer_code and len(output_code_buffer) > 0:
                             output_code_buffer = flush_output_buffer(markdown_file_handle, output_code_buffer)
-                        prefix = ""
+                        markdown_line_prefix = ""
                         # determine correct prefix
                         if not within_logging_block:
                             within_logging_block = True
                             markdown_file_handle.write("> [!NOTE]\n")
                             logging_block_line_count = 1
-                            prefix = "> "
+                            markdown_line_prefix = "> "
                         else:
                             logging_block_line_count += 1
                         # write logging code line to markdown
-                        markdown_file_handle.write(prefix + remove_logging_text(code_line) + '</br>')
+                        markdown_file_handle.write(markdown_line_prefix + remove_logging_text(code_line) + '</br>')
                     # if not logging, append code to code buffer
-                    elif output_now:
+                    elif collecting_buffer_code:
                         within_logging_block = False
                         output_code_buffer.append(code_line)
                     # if no code to output and not a logging line, check to see if we have hit code start
                     elif "__main__" in code_line:
-                        output_now = True
+                        collecting_buffer_code = True
                         within_logging_block = False
                 # if I can't get a line number, is this a special return case?
                 else:
                     if "Return" in transcript_line:
-                        output_now = False
+                        collecting_buffer_code = False
                         within_logging_block = False
-                    if output_now:
+                    if collecting_buffer_code:
                         if within_logging_block:
                             markdown_file_handle.write("\n")
                             within_logging_block = False
