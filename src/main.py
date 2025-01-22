@@ -1,4 +1,4 @@
-import logging
+from setup_logging import logger
 import pdb
 import sys
 import argparse
@@ -23,10 +23,12 @@ def flush_output_buffer(file_handle, output_buffer):
 
 
 def is_code_line(line):
-    if "<string>" in line and "<module>" in line:
+    start_token = "<string>"
+    end_token = "<module>"
+    if start_token in line and end_token in line:
         return line[
-               line.index("<string>")+8+1:
-               line.index("<module>")-1
+               line.index(start_token)+len(start_token)+1:
+               line.index(end_token)-1
                ]
     else:
         return None
@@ -100,10 +102,16 @@ def set_args(arg_metadata):
     return parser.parse_args()
 
 
+def log_core_vars(core_vars):
+    for core_var in core_vars:
+        logger.info(f"{core_var}: {globals()[core_var]}")
+
+
 if __name__ == '__main__':
-    logging.info("in main")
+    logger.info("in main")
 
     # get args for CLI usage
+    logger.info("setting up CLI arguments")
     args_metadata = [
         ("demo_usage_file_path", "Path of the demo usage file and its path"),
         ("applicationname", "Application name which is being demoed"),
@@ -112,43 +120,53 @@ if __name__ == '__main__':
     args = set_args(args_metadata)
 
     # define core variables based on args
+    logger.info("setting up core variables")
     application_name = args.applicationname
     demo_usage_file_path = args.demo_usage_file_path
     application_path_dot_notation = get_dot_notation(demo_usage_file_path, application_name)
     markdown_output_file = args.markdown_file_path
+    log_core_vars(["application_name", "demo_usage_file_path", "markdown_output_file"])
 
     # create number of debug line iterations file name
     debug_line_iterations_file_name = "./tmp/test.txt"
     demo_transcript_file_name = "./tmp/output.txt"
 
     # get code
+    logger.info("obtaining demo usage code")
     with open(demo_usage_file_path, 'r') as f:
         demo_walkthrough_code = '\n'.join(
             [line.rstrip("\n") for line in f]
         )
 
     # create stdin for code lines number of ns for pdb to iterate and direct stdin to that file
+    logger.info("setting up a player piano input for pdb to run a number of code line iterations")
     with open(debug_line_iterations_file_name, "wt") as test_file_handle:
         # 100 was added here because I encountered a loop which made the program run longer than the line length
-        # why 100
-        # why not run until pdb is over?
+        # why 100?  why can't it run until pdb is over?
         test_file_handle.write("n\n" * demo_walkthrough_code.count("\n") * 100)
 
+    logger.info("redirecting input to player piano")
     with open(debug_line_iterations_file_name, "rt") as demo_line_iterations_file_handle:
         sys.stdin = demo_line_iterations_file_handle
 
         # direct stdout to a file
+        logger.info("redirecting output to transcript file")
         with open(demo_transcript_file_name, "wt") as demo_transcript_file_handle:
             remember_stdout = sys.stdout
             sys.stdout = demo_transcript_file_handle
 
             # run pdb, capturing stdout for pdb using stdin
+            logger.info("iterating through the demo walkthrough python and making a transcript")
+            import logging
+            logging.disable(logging.INFO)
             pdb.run(demo_walkthrough_code)
+            logging.disable(logging.NOTSET)
 
             # redirect stdout back to true stdout
             sys.stdout = remember_stdout
 
     # process the output file to pretty it up
+    logger.info("converting demo usage transcript into markdown")
     convert_transcript_lines_to_markdown(
         demo_walkthrough_code.split("\n"),
         demo_transcript_file_name,
