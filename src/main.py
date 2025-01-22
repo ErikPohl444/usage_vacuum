@@ -86,26 +86,25 @@ def get_dot_notation(demo_usage_file_path, application_name):
     )
 
 
+def set_args(arg_metadata):
+    parser = argparse.ArgumentParser(
+        description="Transform a demo usage script into markdown"
+    )
+    for arg in arg_metadata:
+        parser.add_argument(arg[0], help=arg[1])
+    return parser.parse_args()
+
+
 if __name__ == '__main__':
     logging.info("in main")
 
     # get args for CLI usage
-    parser = argparse.ArgumentParser(
-        description="Transform a demo usage script into markdown"
-    )
-    parser.add_argument(
-        "demo_usage_file_path",
-        help="Path of the demo usage file and its path"
-    )
-    parser.add_argument(
-        "applicationname",
-        help="Application name which is being demoed"
-    )
-    parser.add_argument(
-        "markdown_file_path",
-        help="Markdown file name and path"
-    )
-    args = parser.parse_args()
+    args_metadata = [
+        ("demo_usage_file_path", "Path of the demo usage file and its path"),
+        ("applicationname", "Application name which is being demoed"),
+        ("markdown_file_path", "Markdown file name and path")
+    ]
+    args = set_args(args_metadata)
 
     # define core variables based on args
     application_name = args.applicationname
