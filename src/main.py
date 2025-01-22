@@ -135,9 +135,9 @@ if __name__ == '__main__':
 
     # get code
     logger.info("obtaining demo usage code")
-    with open(demo_usage_file_path, 'r') as f:
+    with open(demo_usage_file_path, 'r') as demo_usage_file_handle:
         demo_walkthrough_code = '\n'.join(
-            [line.rstrip("\n") for line in f]
+            [demo_usage_file_line.rstrip("\n") for demo_usage_file_line in demo_usage_file_handle]
         )
 
     # create stdin for code lines number of ns for pdb to iterate and direct stdin to that file
