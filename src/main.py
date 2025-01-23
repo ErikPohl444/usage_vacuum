@@ -36,6 +36,18 @@ def is_code_line(line):
         return None
 
 
+def is_start_marker_of_transcriptable_code(code_line):
+    return "__main__" in code_line
+
+
+def is_end_marker_of_transcriptable_code(code_line):
+    return "Return" in code_line
+
+
+def beginning_of_logging(code_line):
+    return code_line.lstrip().startswith("logger.info")
+
+
 def convert_transcript_lines_to_markdown(
         demo_code_lines,
         demo_usage_transcript_file_name,
@@ -60,7 +72,7 @@ def convert_transcript_lines_to_markdown(
                     code_line = demo_code_lines[int(line_num)-1].rstrip("\n")
 
                     # is it a logging line?
-                    if code_line.lstrip().startswith("logger.info"):
+                    if beginning_of_logging(code_line):
                         # flush code buffer to output
                         if collecting_buffer_code and len(output_code_buffer) > 0:
                             output_code_buffer = flush_output_buffer(markdown_file_handle, output_code_buffer)
@@ -80,12 +92,12 @@ def convert_transcript_lines_to_markdown(
                         within_logging_block = False
                         output_code_buffer.append(code_line)
                     # if no code to output and not a logging line, check to see if we have hit code start
-                    elif "__main__" in code_line:
+                    elif is_start_marker_of_transcriptable_code(code_line):
                         collecting_buffer_code = True
                         within_logging_block = False
                 # if I can't get a line number, is this a special return case?
                 else:
-                    if "Return" in transcript_line:
+                    if is_end_marker_of_transcriptable_code(transcript_line):
                         collecting_buffer_code = False
                         within_logging_block = False
                     if collecting_buffer_code:
