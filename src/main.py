@@ -58,7 +58,6 @@ def convert_transcript_lines_to_markdown(
     collecting_buffer_code = False
     output_code_buffer = []
     within_logging_block = False
-    logging_block_line_count = 0
 
     with open(markdown_output_file_name, "wt") as markdown_file_handle:
         with open(demo_usage_transcript_file_name, "rt") as transcript_file_handle:
@@ -81,10 +80,7 @@ def convert_transcript_lines_to_markdown(
                         if not within_logging_block:
                             within_logging_block = True
                             markdown_file_handle.write("> [!NOTE]\n")
-                            logging_block_line_count = 1
                             markdown_line_prefix = "> "
-                        else:
-                            logging_block_line_count += 1
                         # write logging code line to markdown
                         markdown_file_handle.write(markdown_line_prefix + remove_logging_text(code_line) + '</br>')
                     # if not logging, append code to code buffer
