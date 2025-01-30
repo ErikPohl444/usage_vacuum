@@ -6,3 +6,4 @@ README.md.resource
 configs.py
 test.txt
 /tmp
+src/__pycache__

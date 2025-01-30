@@ -3,9 +3,7 @@ import pdb
 import sys
 import argparse
 import logging
-
-sys.path.insert(1, '/Users/epohl/projects/dynamic_assignment/src/')
-sys.path.insert(1, '/Users/epohl/projects/dynamic_assignment/')
+import os
 
 
 def remove_logging_text(logging_line):
@@ -148,6 +146,10 @@ if __name__ == '__main__':
     application_path_dot_notation = get_dot_notation(demo_usage_file_path, application_name)
     markdown_output_file = args.markdown_file_path
     log_core_vars(["application_name", "demo_usage_file_path", "markdown_output_file"])
+    add_path1 = os.path.dirname(demo_usage_file_path)
+    add_path2 = os.path.dirname(add_path1)
+    sys.path.insert(1, add_path1)
+    sys.path.insert(1, add_path2)
 
     # create number of debug line iterations file name
     debug_line_iterations_file_name = "./tmp/test.txt"
