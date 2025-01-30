@@ -106,10 +106,10 @@ def convert_transcript_lines_to_markdown(
                 flush_output_buffer(markdown_file_handle, output_code_buffer)
 
 
-def get_dot_notation(demo_usage_file_path, application_name):
-    demo_usage_file_path_list = demo_usage_file_path.split('\\')
+def get_dot_notation(full_demo_usage_file_path, root_application_name):
+    demo_usage_file_path_list = full_demo_usage_file_path.split('\\')
     return '.'.join(
-        demo_usage_file_path_list[demo_usage_file_path_list.index(application_name):]
+        demo_usage_file_path_list[demo_usage_file_path_list.index(root_application_name):]
     )
 
 
