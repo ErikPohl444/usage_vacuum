@@ -98,16 +98,32 @@ If any disclaimer exists, add it here.
 
 ## Getting Started
 
-Provide non-setup instructions for getting started using the work in the repo.
+To get started with Usage Vacuum, prepare a Python script that demonstrates the functionality you want to showcase. This script should include print statements to display outputs as you walk through your code. Once your demo script is ready and working as intended, you can use Usage Vacuum to convert it into a markdown file, where the code and its outputs are interleaved for easy sharing and documentation.
 
 ## Prerequisites
 
-This section has overlap with minimum system requirements, requirements.txt, and technologies.
-I consider this anything which needs to be on your machine or available to you before installing and using the work in the repo.
+- Python 3.7 or newer must be installed on your system.
+- Ensure you have `pip` (Python package manager) available.
+- It is recommended to use a virtual environment (such as `venv` or `virtualenv`) to manage dependencies.
+- Your demo script should be a standalone Python file that runs without errors.
 
 ## Installing
 
-Provide installation steps here.
+1. Clone this repository:
+   ```sh
+   git clone https://github.com/ErikPohl444/usage_vacuum.git
+   cd usage_vacuum
+   ```
+2. (Recommended) Create and activate a virtual environment:
+   ```sh
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+3. Install required dependencies:
+   ```sh
+   pip install -r requirements.txt
+   ```
+   If a `requirements.txt` is not yet provided, install any needed libraries as you encounter ImportErrors, or create one with your environment’s current packages using `pip freeze > requirements.txt`.
 
 ## Running the tests
 
