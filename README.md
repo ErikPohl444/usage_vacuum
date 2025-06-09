@@ -1,3 +1,5 @@
+![Usage vacuum](14595817997ba32a69fb3o.webp)
+
 # Usage Vacuum 
 
 Usage Vacuum takes a Python script built to demo some functionality with print output, converts it to markdown.
