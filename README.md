@@ -16,77 +16,107 @@ Saves time if you are producing walkthrough markdown and have a script.
 Another benefit is that you can test your demo usage script, then convert it to markdown when it works.
 This prevents beautiful markdown with scripting in it which does not work or does not produce the advertised output.
 
+---
 
-## Future plans
+## Future Plans
 
-List a roadmap or future plans for the repo work.
+- **Enhanced Output Formatting:** More options for customizing the Markdown output.
+- **Jupyter Notebook Support:** Convert demo scripts directly into Jupyter Notebooks.
+- **CLI Improvements:** Add more command-line options and interactive prompts.
+- **Automated Testing:** Integrate with CI for automated validation of scripts and output.
+- **Plugin/Extension System:** Allow for user-contributed extensions to support other formats or workflows.
 
-- [ ] 
+---
 
-## Important disclaimer
+## Important Disclaimer
 
-If any disclaimer exists, add it here.
+This tool is intended to assist with documentation generation for Python scripts. It is provided as-is and may not handle every possible edge case in Python output or formatting.
+
+---
 
 ## Getting Started
 
-To get started with Usage Vacuum, prepare a Python script that demonstrates the functionality you want to showcase. This script should include print statements to display outputs as you walk through your code. Once your demo script is ready and working as intended, you can use Usage Vacuum to convert it into a markdown file, where the code and its outputs are interleaved for easy sharing and documentation.
+To get started with Usage Vacuum, prepare a Python script that demonstrates the functionality you want to showcase. This script should include print statements to display outputs as you walk through the code.
+
+---
 
 ## Prerequisites
 
-- Python 3.7 or newer must be installed on your system.
-- Ensure you have `pip` (Python package manager) available.
-- It is recommended to use a virtual environment (such as `venv` or `virtualenv`) to manage dependencies.
-- Your demo script should be a standalone Python file that runs without errors.
+- Python 3.7 or newer
+- `pip` (Python package manager)
+- (Recommended) A virtual environment (`venv` or `virtualenv`)
+- A standalone Python demo script that runs without errors
+
+---
 
 ## Installing
 
 1. Clone this repository:
-   ```sh
-   git clone https://github.com/ErikPohl444/usage_vacuum.git
-   cd usage_vacuum
-   ```
+    ```sh
+    git clone https://github.com/ErikPohl444/usage_vacuum.git
+    cd usage_vacuum
+    ```
 2. (Recommended) Create and activate a virtual environment:
-   ```sh
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-3. Install required dependencies:
-   ```sh
-   pip install -r requirements.txt
-   ```
-   If a `requirements.txt` is not yet provided, install any needed libraries as you encounter ImportErrors, or create one with your environment’s current packages using `pip freeze > requirements.txt`.
+    ```sh
+    python -m venv venv
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    ```
+3. Install dependencies:
+    ```sh
+    pip install -r requirements.txt
+    ```
+    If `requirements.txt` is missing, install needed libraries as you encounter ImportErrors, or generate one with:
+    ```sh
+    pip freeze > requirements.txt
+    ```
 
-## Running the tests
+---
 
-Provide instructions on running the tests here.
+## Running the Tests
 
-## Technologies used
+Tests are pending.  Watch this space.
 
-List the technologies used here.
+---
 
-e.g.
-* Written in Chicken 2.0
+## Technologies Used
 
-## Minimum system requirements
+- Python 3.7+
+- Standard Python libraries
 
-List the minimum system requirements for the application to run.
+---
 
-e.g.
-* Must be run on VALIS.
+## Minimum System Requirements
+
+- Python 3.7 or newer
+- Works on Linux, macOS, and Windows
+
+---
 
 ## Contributing
 
-I invite contributions.  See the [Contribution Guidelines](CONTRIBUTING.md) for any guidelines.
+Contributions are welcome! See the [Contribution Guidelines](CONTRIBUTING.md) for details.
+
+1. Fork this repository.
+2. Create a new branch for your feature or bugfix.
+3. Make your changes.
+4. Test your code.
+5. Submit a pull request.
+
+---
 
 ## Authors
 
-See the [Authors doc.](AUTHORS.md)
+See the [Authors doc.](AUTHORS.md).
+
+---
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
 
 ## Acknowledgments
 
-* Thanks to everyone who has motivated me to learn more.
-* These folks were key to this particular effort: [ACKNOWLEDGEMENTS](ACKNOWLEDGEMENTS.md)
+- Thanks to everyone who has motivated me to learn more.
+- Special thanks to the contributors listed in [ACKNOWLEDGEMENTS](ACKNOWLEDGEMENTS.md).
